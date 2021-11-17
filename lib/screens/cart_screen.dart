@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/cart.dart';
+import '../providers/cart.dart' show Cart;
+import '../widgets/cart_item.dart';
+import '../providers/orders.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({Key? key}) : super(key: key);
@@ -12,7 +14,7 @@ class CartScreen extends StatelessWidget {
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your cart'),
+        title: const Text('Your cart'),
       ),
       body: Column(children: <Widget>[
         Card(
@@ -26,17 +28,23 @@ class CartScreen extends StatelessWidget {
                       'Total',
                       style: TextStyle(fontSize: 20),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     Chip(
                       label: Text(
                         '\$${cart.totalAmount}',
-                        style: TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.white),
                       ),
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
                     FlatButton(
                       child: const Text('ORDER NOW'),
-                      onPressed: () {},
+                      onPressed: () {
+                        Provider.of<Orders>(context, listen: false).addOrder(
+                          cart.items.values.toList(),
+                          cart.totalAmount,
+                        );
+                        cart.clear();
+                      },
                       textColor: Theme.of(context).primaryColor,
                     )
                   ],
@@ -45,9 +53,13 @@ class CartScreen extends StatelessWidget {
         Expanded(
           child: ListView.builder(
               itemCount: cart.items.length,
-              itemBuilder: (ctx, i) => Padding(
-                  padding: const EdgeInsets.only(
-                      left: 10, right: 10, top: 5, bottom: 5))),
+              itemBuilder: (ctx, i) => CartItem(
+                    cart.items.values.toList()[i].id,
+                    cart.items.keys.toList()[i],
+                    cart.items.values.toList()[i].price,
+                    cart.items.values.toList()[i].quantity,
+                    cart.items.values.toList()[i].title,
+                  )),
         )
       ]),
     );
