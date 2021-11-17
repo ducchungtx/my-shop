@@ -12,11 +12,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Product'),
+        title: const Text('Edit Product'),
       ),
-      body: Center(
-        child: Text('Edit Product'),
-      ),
+      body: Form(
+          child: ListView(
+        children: <Widget>[
+          TextFormField(
+            decoration: const InputDecoration(labelText: 'Title'),
+            textInputAction: TextInputAction.next,
+            maxLines: 1,
+          ),
+        ],
+      )),
     );
   }
 }
