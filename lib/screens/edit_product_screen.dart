@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:my_shop/providers/products.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/product.dart';
@@ -18,6 +17,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlController = TextEditingController();
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
+
   var _editedProduct = Product(
     id: null,
     title: '',
@@ -41,21 +41,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   @override
   void didChangeDependencies() {
-    if (_isInit) {
-      final productId = ModalRoute.of(context)!.settings.arguments as String;
+    if (!_isInit) {
+      final productId = ModalRoute.of(context)!.settings.arguments;
       if (productId != null) {
-        _editedProduct =
-            Provider.of<Products>(context, listen: false).findById(productId);
+        _editedProduct = Provider.of<Products>(context, listen: false)
+            .findById(productId as String);
         _initValues = {
           'title': _editedProduct.title,
-          'description': _editedProduct.description,
           'price': _editedProduct.price.toString(),
+          'description': _editedProduct.description,
           // 'imageUrl': _editedProduct.imageUrl,
           'imageUrl': '',
         };
+        _imageUrlController.text = _editedProduct.imageUrl;
       }
+      _isInit = true;
     }
-    _isInit = false;
     super.didChangeDependencies();
   }
 
@@ -133,6 +134,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                 ),
                 TextFormField(
+                    initialValue: _initValues['price'],
                     decoration: const InputDecoration(labelText: 'Price'),
                     textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.number,
@@ -164,6 +166,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       );
                     }),
                 TextFormField(
+                  initialValue: _initValues['description'],
                   decoration: const InputDecoration(labelText: 'Description'),
                   maxLines: 3,
                   keyboardType: TextInputType.multiline,
@@ -199,7 +202,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                         border: Border.all(width: 1, color: Colors.grey),
                       ),
                       child: _imageUrlController.text.isEmpty
-                          ? Text('Enter a URl')
+                          ? const Text('Enter a URl')
                           : FittedBox(
                               child: Image.network(
                                 _imageUrlController.text,
@@ -209,6 +212,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     ),
                     Expanded(
                         child: TextFormField(
+                      initialValue: _initValues['imageUrl'],
                       decoration: const InputDecoration(labelText: 'Image URL'),
                       keyboardType: TextInputType.url,
                       textInputAction: TextInputAction.done,
