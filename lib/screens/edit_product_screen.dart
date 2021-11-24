@@ -42,7 +42,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   void didChangeDependencies() {
     if (!_isInit) {
       final productId = ModalRoute.of(context)!.settings.arguments as String;
-      if (productId != null) {
+      if (productId != '') {
         _editedProduct =
             Provider.of<Products>(context, listen: false).findById(productId);
         _initValues = {
