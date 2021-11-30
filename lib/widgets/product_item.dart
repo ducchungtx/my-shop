@@ -23,7 +23,7 @@ class ProductItem extends StatelessWidget {
         child: GestureDetector(
           onTap: () {
             Navigator.of(context).pushNamed(
-              ProductDetailSreen.routeName,
+              ProductDetailScreen.routeName,
               arguments: product.id,
             );
           },
