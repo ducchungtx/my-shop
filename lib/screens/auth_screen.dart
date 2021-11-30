@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth.dart';
+import '../models/htttp_exception.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -114,14 +115,21 @@ class _AuthCardState extends State<AuthCard> {
     setState(() {
       _isLoading = true;
     });
-    if (_authMode == AuthMode.Login) {
-      // Log user in
-      await Provider.of<Auth>(context, listen: false)
-          .login(_authData['email'], _authData['password']);
-    } else {
-      // Sign user up
-      await Provider.of<Auth>(context, listen: false)
-          .signup(_authData['email'], _authData['password']);
+    try {
+      if (_authMode == AuthMode.Login) {
+        // Log user in
+        await Provider.of<Auth>(context, listen: false)
+            .login(_authData['email'], _authData['password']);
+      } else {
+        // Sign user up
+        await Provider.of<Auth>(context, listen: false)
+            .signup(_authData['email'], _authData['password']);
+      }
+    } on HttpException catch (error) {
+      var errorMessage = 'Authenticate Failed.';
+    } catch (error) {
+      const errorMessage =
+          'Could not authenticate you. Please try again later.';
     }
     setState(() {
       _isLoading = false;
